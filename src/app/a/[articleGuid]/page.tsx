@@ -17,6 +17,19 @@ const formatDate = (dateString: string) => {
   })
 }
 
+const decodeHtmlEntities = (text: string) => {
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+    '&nbsp;': ' ',
+  }
+  return text.replace(/&(?:amp|lt|gt|quot|#39|apos|nbsp);/g, (match) => entities[match] || match)
+}
+
 const Page = async ({ params }: Props) => {
   const { articleGuid } = await params
 
@@ -51,10 +64,12 @@ const Page = async ({ params }: Props) => {
                 {/* Chapter Info */}
                 <div className="min-w-0 flex-1">
                   <h2 className="truncate text-base font-medium text-gray-900 group-hover:text-teal-600 dark:text-gray-100 dark:group-hover:text-teal-400">
-                    {chapter.title}
+                    {decodeHtmlEntities(chapter.title)}
                   </h2>
                   {chapter.subtitle && (
-                    <p className="mt-0.5 truncate text-sm text-gray-500 dark:text-gray-400">{chapter.subtitle}</p>
+                    <p className="mt-0.5 truncate text-sm text-gray-500 dark:text-gray-400">
+                      {decodeHtmlEntities(chapter.subtitle)}
+                    </p>
                   )}
                   <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
                     {formatDate(chapter.firstPublishedAt || chapter.createdAt)}
