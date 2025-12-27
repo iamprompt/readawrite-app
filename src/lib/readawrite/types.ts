@@ -38,6 +38,27 @@ export type ChapterDownloadInfoData = {
   censor_words: number
 }
 
+export type ArticleContentDownloadInfoData = {
+  opt_key: string
+  article_path: string
+  article_thumbnail_path: string
+  article_name: string
+  article_guid: string
+  author_name: string
+  author_guid: string
+  user_id_publisher: number
+  publisher_name: string
+  category_id: number
+  category_name: string
+  create_date: string
+  edit_date: string
+  server_datetime: string
+  article_edition: number
+  thumbnail_edition: number
+  censor_words_content: number
+  disable_word_transform_for_blind: number
+}
+
 export type ArticleChaptersData = {
   total_count: number
   count: number
@@ -196,4 +217,62 @@ export type TagList = {
   tag_id: number
   tag_group_id?: number
   tag_name: string
+}
+
+// Chat Chapter Type
+export type ArticleContent = {
+  last_id_conversation: number
+  message_end_of_chapter: string
+  last_id_character: number
+  character_list: ChapterChatContentCharacterList[]
+  conversation_list: ChapterChatContentConversationList[]
+}
+
+export type ChapterChatContent = {
+  last_id_conversation: number
+  message_end_of_chapter: string
+  last_id_character: number
+  character_list: ChapterChatContentCharacterList[]
+  conversation_list: ChapterChatContentConversationList[]
+}
+
+export type ChapterChatContentCharacterList = {
+  status: any
+  unpromoted_image: number
+  position: string
+  id: number
+  imgProfile: any
+  lastIndexMessage: number
+  conversation_count: number
+  img_path_1x: string
+  is_hidden: boolean
+  img_path_2x: string
+  name: string
+}
+
+export type ChapterChatContentConversationList = {
+  character_id: number
+  message?: string
+  typing?: number
+  conversation_id: number
+  position: string
+  type: string
+  unpromoted_image?: number
+  imageMessage: any
+  height_img?: number
+  width_img?: number
+  img_path_1x?: string
+  img_path_2x?: string
+  gif?: ChapterChatContentGif
+  voice?: ChapterChatContentVoice
+}
+
+export type ChapterChatContentGif = {
+  urlString: string
+  dims: number[]
+}
+
+export type ChapterChatContentVoice = {
+  message: string
+  time: string
 }

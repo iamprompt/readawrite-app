@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { getChapterContentDownloadInfo, getChapterInfo } from '@/lib/readawrite/helpers'
+import { getChapterContent, getChapterInfo } from '@/lib/readawrite/helpers'
 
 type Props = {
   params: Promise<{ chapterGuid: string }>
@@ -21,9 +21,7 @@ const Page = async ({ params }: Props) => {
   const { chapterGuid } = await params
 
   const chapterInfo = await getChapterInfo(chapterGuid)
-  const chapterContentDownloadInfo = await getChapterContentDownloadInfo(chapterGuid)
-
-  console.log(chapterContentDownloadInfo)
+  const chapterContent = await getChapterContent(chapterGuid)
 
   const { article, chapter } = chapterInfo
 
@@ -74,6 +72,10 @@ const Page = async ({ params }: Props) => {
 
           <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">{chapter.title}</h2>
           {chapter.subtitle && <p className="mt-1 text-gray-500 dark:text-gray-400">{chapter.subtitle}</p>}
+
+          <div className="mt-4">
+            <pre className="whitespace-pre-wrap">{JSON.stringify(chapterContent, null, 2)}</pre>
+          </div>
 
           {/* Chapter Metadata */}
           <div className="mt-4 flex flex-wrap gap-4 border-t border-gray-100 pt-4 text-xs text-gray-400 dark:border-gray-700 dark:text-gray-500">

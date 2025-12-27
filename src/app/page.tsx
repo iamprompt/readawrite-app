@@ -1,16 +1,6 @@
 import Image from 'next/image'
 
-import { getChapterInfo } from '@/lib/readawrite/helpers'
-
 const Page = async () => {
-  // const chapters = await getArticleChapters('39bf02efaa9112e667cfe753dc7783de')
-
-  // console.log(chapters)
-
-  const chapterContent = await getChapterInfo('8fa208c9e1436872a5b91776c7ff22de')
-
-  console.log(chapterContent)
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
