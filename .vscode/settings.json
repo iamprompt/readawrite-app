@@ -2,5 +2,8 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "files.associations": {
         "*.css": "tailwindcss"
+    },
+    "[tailwindcss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

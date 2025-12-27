@@ -142,10 +142,11 @@ const ChatBubble = ({
 
 // Interactive Chat Container with Click-to-Advance
 export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
-  const [visibleCount, setVisibleCount] = useState(1)
+  const [visibleCount, setVisibleCount] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
   const [isAutoPlay, setIsAutoPlay] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const characterMap = new Map(content.character_list.map((char) => [char.id, char]))
@@ -180,7 +181,7 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
 
   // Restart reading
   const restart = () => {
-    setVisibleCount(1)
+    setVisibleCount(0)
     setIsComplete(false)
     setIsAutoPlay(false)
   }
@@ -192,7 +193,8 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
 
   // Scroll to bottom when new message appears
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    chatContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [visibleCount])
 
   // Auto-play effect
@@ -214,9 +216,9 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
   }, [isAutoPlay, isComplete, advanceMessage])
 
   return (
-    <div className="relative">
+    <div className="relative flex h-dvh flex-col" ref={chatContainerRef}>
       {/* Chat Messages */}
-      <div className="min-h-[300px] space-y-1 rounded-lg bg-white p-4 pb-20 dark:bg-gray-800">
+      <div className="no-scrollbar flex-1 scroll-pb-12 space-y-1 overflow-y-scroll rounded-t-lg bg-white p-4 dark:bg-gray-800">
         {conversationsWithMeta
           .slice(0, visibleCount)
           .map(({ conversation, isNewCharacter, showAvatar, showName }, index) => {
@@ -246,70 +248,57 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
           </div>
         )}
 
-        <div ref={chatEndRef} />
+        <div id="chat-end" ref={chatEndRef} />
       </div>
 
-      {/* Bottom Control Bar */}
-      <div className="sticky right-0 bottom-0 left-0 flex items-center justify-between gap-4 rounded-b-lg border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-700 dark:bg-gray-800/95">
-        {/* Progress */}
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {visibleCount} / {totalMessages}
-        </div>
+      {/* Bottom Control Bar - Matching Readawrite original layout */}
+      <div className="sticky bottom-0 flex items-stretch rounded-b-lg border-t border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+        {/* Left Section - Restart */}
+        <button
+          onClick={restart}
+          className="flex w-20 shrink-0 items-center justify-center border-r border-gray-200 py-4 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 dark:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          title="เริ่มใหม่"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        </button>
 
-        {/* Main Controls */}
-        <div className="flex items-center gap-2">
+        {/* Center Section - Click to Read / Progress */}
+        <button
+          onClick={!isComplete ? advanceMessage : showAll}
+          disabled={isComplete}
+          className="flex flex-1 items-center justify-center py-4 text-base text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-default disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800"
+        >
           {!isComplete ? (
-            <>
-              {/* Click to Read Button */}
-              <button
-                onClick={advanceMessage}
-                className="rounded-full bg-teal-500 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-600 active:bg-teal-700"
-              >
-                คลิกอ่าน
-              </button>
-
-              {/* Auto-play Toggle */}
-              <button
-                onClick={toggleAutoPlay}
-                className={`rounded-full p-2 transition-colors ${
-                  isAutoPlay
-                    ? 'bg-teal-500 text-white'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
-                }`}
-                title={isAutoPlay ? 'หยุด' : 'เล่นอัตโนมัติ'}
-              >
-                {isAutoPlay ? (
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                  </svg>
-                ) : (
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
-              </button>
-            </>
+            <span>คลิกอ่าน</span>
           ) : (
-            <button
-              onClick={restart}
-              className="rounded-full bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300"
-            >
-              เริ่มอ่านใหม่
-            </button>
+            <span className="text-sm text-gray-400 dark:text-gray-500">จบตอน</span>
           )}
-        </div>
+        </button>
 
-        {/* Show All Button */}
-        {!isComplete && (
-          <button
-            onClick={showAll}
-            className="text-sm text-gray-500 transition-colors hover:text-teal-600 dark:text-gray-400"
-          >
-            ดูทั้งหมด
-          </button>
-        )}
-
-        {isComplete && <div className="w-16" />}
+        {/* Right Section - Next / Auto-play */}
+        <button
+          onClick={!isComplete ? (isAutoPlay ? toggleAutoPlay : advanceMessage) : undefined}
+          onDoubleClick={toggleAutoPlay}
+          disabled={isComplete}
+          className="flex w-20 shrink-0 items-center justify-center border-l border-gray-200 py-4 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 disabled:cursor-default disabled:text-gray-300 disabled:hover:bg-transparent dark:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 dark:disabled:text-gray-600"
+          title={isAutoPlay ? 'หยุดเล่นอัตโนมัติ' : 'ถัดไป (ดับเบิลคลิกเพื่อเล่นอัตโนมัติ)'}
+        >
+          {isAutoPlay ? (
+            <svg className="h-5 w-5 text-teal-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          ) : (
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          )}
+        </button>
       </div>
     </div>
   )
