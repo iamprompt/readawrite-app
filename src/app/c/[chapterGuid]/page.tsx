@@ -124,7 +124,7 @@ const ChatBubble = ({
         )}
 
         {/* GIF message */}
-        {conversation.gif && (
+        {conversation.gif && conversation.gif.urlString && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={conversation.gif.urlString}
