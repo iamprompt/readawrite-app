@@ -216,9 +216,9 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
   }, [isAutoPlay, isComplete, advanceMessage])
 
   return (
-    <div className="relative flex h-dvh flex-col" ref={chatContainerRef}>
+    <div className="relative -mx-4 flex h-dvh flex-col" ref={chatContainerRef}>
       {/* Chat Messages */}
-      <div className="no-scrollbar flex-1 scroll-pb-12 space-y-1 overflow-y-scroll rounded-t-lg bg-white p-4 dark:bg-gray-800">
+      <div className="no-scrollbar flex-1 scroll-pb-12 space-y-1 overflow-y-scroll rounded-t-lg bg-white px-8 py-4 dark:bg-gray-800">
         {conversationsWithMeta
           .slice(0, visibleCount)
           .map(({ conversation, isNewCharacter, showAvatar, showName }, index) => {
