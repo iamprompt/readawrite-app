@@ -149,6 +149,8 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
+  const isInit = useRef(false)
+
   const characterMap = new Map(content.character_list.map((char) => [char.id, char]))
   const totalMessages = content.conversation_list.length
 
@@ -193,6 +195,11 @@ export const ChatContainer = ({ content }: { content: ChapterChatContent }) => {
 
   // Scroll to bottom when new message appears
   useEffect(() => {
+    if (!isInit.current) {
+      isInit.current = true
+      return
+    }
+
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     chatContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [visibleCount])
