@@ -1,9 +1,48 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { getArticleChapters } from '@/lib/readawrite/helpers'
+import { getArticleChapters, getChapterInfo } from '@/lib/readawrite/helpers'
 
 type Props = {
   params: Promise<{ articleGuid: string }>
+}
+
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+  const { articleGuid } = await params
+  const chapterData = await getArticleChapters(articleGuid)
+
+  // Use first chapter to get article info
+  if (chapterData.chapters.length > 0) {
+    const firstChapter = chapterData.chapters[0]
+    const chapterInfo = await getChapterInfo(firstChapter.guid)
+    const { article } = chapterInfo
+
+    const title = article.title
+    const description = `${article.title} โดย ${article.publisher.name} - ${chapterData.total} ตอน`
+
+    return {
+      title,
+      description,
+      authors: [{ name: article.publisher.name }],
+      keywords: article.tags,
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+        images: [{ url: article.thumbnail }],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [article.thumbnail],
+      },
+    }
+  }
+
+  return {
+    title: 'บทความ',
+  }
 }
 
 const formatDate = (dateString: string) => {
