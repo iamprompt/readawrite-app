@@ -249,8 +249,17 @@ const Page = async ({ params }: Props) => {
           {chapter.subtitle && <p className="mt-1 text-gray-500 dark:text-gray-400">{chapter.subtitle}</p>}
         </div>
 
-        {/* Chat Content */}
+        {/* Chapter Content */}
         <div className="mb-6">
+          {/* HTML Content (contentType: 0) */}
+          {'html' in chapterContent && chapterContent.html && (
+            <div
+              className="prose prose-lg dark:prose-invert max-w-none rounded-lg bg-white p-6 dark:bg-gray-800 [&_.AlignCenter]:text-center [&_.AlignCenter]:indent-0 [&_.AlignRight]:text-right [&_img]:mx-auto [&_img]:max-w-full [&_img]:rounded-lg [&_p]:mb-5 [&_p]:indent-4 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:text-gray-800 dark:[&_p]:text-gray-200"
+              dangerouslySetInnerHTML={{ __html: chapterContent.html }}
+            />
+          )}
+
+          {/* Chat Content (contentType: 2) */}
           {'content' in chapterContent && chapterContent.content && <ChatContainer content={chapterContent.content} />}
 
           {/* Chapter Metadata */}
